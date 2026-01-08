@@ -102,7 +102,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <option value="">Select Department</option>
                         <?php foreach ($departments as $dept): ?>
                             <option value="<?php echo $dept['id']; ?>"><?php echo htmlspecialchars($dept['department_name']); ?></option>
-                        <?php foreach; // Wait, syntax error below. I will fix it. ?>
                         <?php endforeach; ?>
                     </select>
                 </div>

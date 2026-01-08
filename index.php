@@ -1,174 +1,82 @@
 <?php
-// Database connection configuration
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "HUSCMS";
-
-// Function to check if database exists
-function databaseExists($conn, $dbname) {
-    $result = $conn->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$dbname'");
-    return $result && $result->num_rows > 0;
-}
-
-// Function to check if table exists (requires database to be selected)
-function tableExists($conn, $table) {
-    $result = $conn->query("SHOW TABLES LIKE '$table'");
-    return $result && $result->num_rows > 0;
-}
-
-try {
-    // Connect to MySQL server
-    $conn = new mysqli($servername, $username, $password);
-    if ($conn->connect_error) {
-        throw new Exception("Connection failed: " . $conn->connect_error);
-    }
-
-    // Check if database exists, create if not
-    if (!databaseExists($conn, $dbname)) {
-        include 'database_setup.php';
-    } else {
-        // Select the database before checking tables
-        if (!$conn->select_db($dbname)) {
-            throw new Exception("Failed to select database: " . $conn->error);
-        }
-        // Check if Student table exists, run setup if not
-        if (!tableExists($conn, 'Student')) {
-            include 'database_setup.php';
-        }
-    }
-
-    // Ensure database is selected for subsequent queries
-    if (!$conn->select_db($dbname)) {
-        throw new Exception("Failed to select database: " . $conn->error);
-    }
-
-} catch (Exception $e) {
-    die("Setup error: " . $e->getMessage());
-}
+require_once 'includes/config.php';
+$page_title = "Welcome - SCMS";
+include 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HUSCMS - Student Contact Management System</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <h1>Haramaya University Student Contact Management System</h1>
-
-    <!-- Filter by Department -->
-    <div class="filter-section">
-        <form method="POST" action="">
-            <label for="department">Select Department:</label>
-            <select name="department" id="department">
-                <option value="">All Departments</option>
-                <option value="SENG">Software Engineering (SENG)</option>
-                <option value="MED">Medicine (MED)</option>
-            </select>
-            <button type="submit">Get Student Count</button>
-        </form>
+<div class="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900">
+    <!-- Background Decoration -->
+    <div class="absolute top-0 left-0 w-full h-full">
+        <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary-600/20 rounded-full blur-[120px]"></div>
+        <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px]"></div>
     </div>
 
-    <!-- Display Stored Procedure Result -->
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['department'])) {
-        $dept = $conn->real_escape_string($_POST['department']);
-        if ($dept) {
-            // Check if stored procedure exists
-            $checkProc = $conn->query("SHOW PROCEDURE STATUS WHERE Db = '$dbname' AND Name = 'GetGenderCountByDepartment'");
-            if ($checkProc && $checkProc->num_rows > 0) {
-                // Call stored procedure
-                $result = $conn->query("CALL GetGenderCountByDepartment('$dept', @male_count, @female_count)");
-                if ($result) {
-                  
-                    while ($conn->more_results()) {
-                        $conn->next_result();
-                    }
-                    $counts = $conn->query("SELECT @male_count AS male_count, @female_count AS female_count");
-                    if ($counts) {
-                        $row = $counts->fetch_assoc();
-                        echo "<p>Male Students in $dept: " . ($row['male_count'] ?? 0) . "</p>";
-                        echo "<p>Female Students in $dept: " . ($row['female_count'] ?? 0) . "</p>";
-                        $counts->free();
-                    } else {
-                        echo "<p>Error retrieving counts: " . $conn->error . "</p>";
-                    }
-                } else {
-                    echo "<p>Error calling stored procedure: " . $conn->error . "</p>";
-                }
-            } else {
-                echo "<p>Error: Stored procedure GetGenderCountByDepartment does not exist. Please run <a href='database_setup.php'>database_setup.php</a> manually.</p>";
-            }
-            if ($checkProc) {
-                $checkProc->free();
-            }
-        }
-    }
-    ?>
+    <div class="relative z-10 w-full max-w-6xl px-6 mx-auto">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <!-- Content -->
+            <div class="text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 glass text-primary-400 text-sm font-bold mb-8">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                    </span>
+                    System Online
+                </div>
+                <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-tight mb-6 tracking-tight">
+                    Manage Student <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-purple-400">Contacts</span> with Ease.
+                </h1>
+                <p class="text-xl text-gray-400 mb-10 max-w-xl mx-auto lg:mx-0">
+                    A secure, modern, and high-performance portal for students and administrators to manage educational records effortlessly.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                    <a href="student/login.php" class="w-full sm:w-auto px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-2xl shadow-xl shadow-primary-500/20 transition-all hover:scale-105 flex items-center justify-center gap-2">
+                        Student Portal
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                    <a href="admin/login.php" class="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 glass text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2">
+                        Admin Panel
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </a>
+                </div>
+                <div class="mt-12 flex items-center justify-center lg:justify-start gap-3">
+                    <p class="text-gray-500 font-medium">New student?</p>
+                    <a href="student/register.php" class="text-primary-400 font-bold hover:underline underline-offset-4 decoration-2">Create an account</a>
+                </div>
+            </div>
 
-    <!-- Student Contact Table -->
-    <table>
-        <tr>
-            <th>#</th>
-            <th>Full Name</th>
-            <th>College</th>
-            <th>Department</th>
-            <th>Campus</th>
-            <th>Gender</th>
-            <th>Phone</th>
-            <th>Action</th>
-        </tr>
-        <?php
-        // Query all students with explicit column selection
-        $sql = "
-            SELECT s.student_id, s.first_name, s.last_name, d.college, d.department_name, c.campus_name, s.gender, s.phone
-            FROM Student s
-            INNER JOIN Department d ON s.department_id = d.department_id
-            INNER JOIN Campus c ON s.campus_id = c.campus_id
-        ";
-        $result = $conn->query($sql);
-        if ($result) {
-            if ($result->num_rows > 0) {
-                $index = 1;
-                while ($row = $result->fetch_assoc()) {
-                    $fullName = $row['first_name'] . ' ' . $row['last_name'];
-                    echo "<tr>";
-                    echo "<td>$index</td>";
-                    echo "<td>" . htmlspecialchars($fullName) . "</td>";
-                    echo "<td>" . htmlspecialchars($row['college'] ?? 'N/A') . "</td>";
-                    echo "<td>" . htmlspecialchars($row['department_name'] ?? 'N/A') . "</td>";
-                    echo "<td>" . htmlspecialchars($row['campus_name'] ?? 'N/A') . "</td>";
-                    echo "<td>" . htmlspecialchars($row['gender'] ?? 'N/A') . "</td>";
-                    echo "<td>" . htmlspecialchars($row['phone'] ?? 'N/A') . "</td>";
-                    echo "<td><button class='detail-btn' onclick='showDetails({$row['student_id']})'>Detail</button></td>";
-                    echo "</tr>";
-                    $index++;
-                }
-            } else {
-                echo "<tr><td colspan='8'>No students found. Sample data may not be inserted. Run <a href='database_setup.php'>database_setup.php</a>.</td></tr>";
-            }
-            $result->free();
-        } else {
-            echo "<tr><td colspan='8'>Error retrieving data: " . $conn->error . "</td></tr>";
-        }
-        ?>
-    </table>
-
-    <!-- Modal for Detailed Information -->
-    <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">×</span>
-            <h2>Student Details</h2>
-            <div id="studentDetails"></div>
+            <!-- Visual Component -->
+            <div class="hidden lg:block relative">
+                <div class="relative z-20 bg-white/5 glass border border-white/10 p-8 rounded-[3rem] shadow-2xl">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="h-8 bg-white/10 rounded-xl w-3/4"></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="h-32 bg-white/5 rounded-2xl border border-white/5 p-4 flex flex-col justify-end gap-2">
+                                <div class="h-4 bg-primary-500/50 rounded w-1/2"></div>
+                                <div class="h-4 bg-primary-500/20 rounded w-3/4"></div>
+                            </div>
+                            <div class="h-32 bg-white/5 rounded-2xl border border-white/5 p-4 flex flex-col justify-end gap-2">
+                                <div class="h-4 bg-purple-500/50 rounded w-1/2"></div>
+                                <div class="h-4 bg-purple-500/20 rounded w-3/4"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="h-4 bg-white/5 rounded w-full"></div>
+                            <div class="h-4 bg-white/5 rounded w-full"></div>
+                            <div class="h-4 bg-white/5 rounded w-2/3"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Floating Icons -->
+                <div class="absolute -top-10 -right-10 w-24 h-24 bg-primary-600/40 rounded-3xl blur-2xl animate-pulse"></div>
+                <div class="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-purple-600/30 rounded-full blur-[80px]"></div>
+            </div>
         </div>
     </div>
+</div>
 
-    <script src="script.js"></script>
-</body>
-</html>
-<?php
-$conn->close();
-?>
+<?php include 'includes/footer.php'; ?>
