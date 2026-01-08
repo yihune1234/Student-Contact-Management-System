@@ -36,6 +36,13 @@ include '../includes/header.php';
                 <i data-lucide="users" class="w-5 h-5"></i>
                 Student Database
             </a>
+            <a href="applications.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                Request Logs
+                <?php if ($total_apps > 0): ?>
+                    <span class="ml-auto bg-primary-600 text-[10px] px-2 py-1 rounded-full"><?php echo $total_apps; ?></span>
+                <?php endif; ?>
+            </a>
             <a href="departments.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
                 <i data-lucide="layers" class="w-5 h-5"></i>
                 Manage Departments
@@ -90,7 +97,14 @@ include '../includes/header.php';
                     <p class="text-gray-500 text-xs font-black uppercase tracking-widest mb-2">Departments</p>
                     <p class="text-4xl font-black text-gray-950 dark:text-white"><?php echo $total_departments; ?></p>
                 </div>
-                <div class="bg-white dark:bg-gray-900 p-8 rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all col-span-1 md:col-span-2 relative overflow-hidden group">
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 mb-6">
+                        <i data-lucide="file-text" class="w-7 h-7"></i>
+                    </div>
+                    <p class="text-gray-500 text-xs font-black uppercase tracking-widest mb-2">Pending Logs</p>
+                    <p class="text-4xl font-black text-gray-950 dark:text-white"><?php echo $total_apps; ?></p>
+                </div>
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all relative overflow-hidden group">
                     <div class="relative z-10">
                         <div class="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 mb-6">
                             <i data-lucide="database" class="w-7 h-7"></i>
