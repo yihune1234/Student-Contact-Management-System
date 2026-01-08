@@ -4,7 +4,7 @@ require_once 'includes/config.php';
 $error = '';
 
 if (isset($_SESSION['user_id'])) {
-    if ($_SESSION['role'] === 'admin') {
+    if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'registrar' || $_SESSION['role'] === 'department officer') {
         header("Location: admin/dashboard.php");
     } else {
         header("Location: student/dashboard.php");
@@ -19,17 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($username) || empty($password)) {
         $error = "Identity and Secret logic required.";
     } else {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt = $pdo->prepare("SELECT u.*, r.role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.username = ?");
         $stmt->execute([$username]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
-            $_SESSION['student_id'] = $user['student_id'];
+            $_SESSION['role'] = strtolower($user['role_name']);
+            $_SESSION['student_id'] = $user['student_link_id'];
             
-            if ($user['role'] === 'admin') {
+            if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'registrar' || $_SESSION['role'] === 'department officer') {
                 header("Location: admin/dashboard.php");
             } else {
                 header("Location: student/dashboard.php");
