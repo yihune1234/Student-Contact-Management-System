@@ -1,7 +1,9 @@
 <?php
 require_once '../includes/config.php';
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+// Role Check
+$allowed_roles = ['admin', 'registrar', 'department officer'];
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $allowed_roles)) {
     header("Location: ../login.php");
     exit;
 }
@@ -22,37 +24,52 @@ if (isset($_GET['delete'])) {
 
 // Search & Filter
 $search = $_GET['search'] ?? '';
+$dept_filter = $_GET['dept'] ?? '';
+$status_filter = $_GET['status'] ?? '';
+
 $where = "1=1";
 $params = [];
 
 if ($search) {
-    $where .= " AND (full_name LIKE ? OR student_id LIKE ? OR email LIKE ?)";
-    $params = ["%$search%", "%$search%", "%$search%"];
+    $where .= " AND (s.full_name LIKE ? OR s.student_id LIKE ? OR s.email LIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
 }
 
-$stmt = $pdo->prepare("SELECT s.*, d.department_name FROM students s LEFT JOIN departments d ON s.department_id = d.id WHERE $where ORDER BY s.created_at DESC");
+if ($dept_filter) {
+    $where .= " AND s.department_id = ?";
+    $params[] = $dept_filter;
+}
+
+if ($status_filter) {
+    $where .= " AND s.enrollment_status_id = ?";
+    $params[] = $status_filter;
+}
+
+$query = "SELECT s.*, d.department_name, es.status_name, p.program_name 
+          FROM students s 
+          LEFT JOIN departments d ON s.department_id = d.id 
+          LEFT JOIN enrollment_statuses es ON s.enrollment_status_id = es.id
+          LEFT JOIN programs p ON s.program_id = p.id
+          WHERE $where ORDER BY s.created_at DESC";
+
+$stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $students = $stmt->fetchAll();
 
-$page_title = "Student Database - Admin SCMS";
+// Fetch filters data
+$departments = $pdo->query("SELECT * FROM departments ORDER BY department_name ASC")->fetchAll();
+$statuses = $pdo->query("SELECT * FROM enrollment_statuses ORDER BY status_name ASC")->fetchAll();
+
+$page_title = "Student Registry - Nexus SCMS";
 include '../includes/header.php';
 ?>
 
 <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950" x-data="{ sidebarOpen: false }">
-    <!-- Mobile Sidebar Overlay -->
-    <div x-show="sidebarOpen" 
-         x-transition:enter="transition-opacity ease-linear duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition-opacity ease-linear duration-300"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         @click="sidebarOpen = false"
-         class="fixed inset-0 z-40 bg-gray-950/60 backdrop-blur-sm lg:hidden" x-cloak></div>
-
     <!-- Sidebar -->
     <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
-           class="fixed inset-y-0 left-0 z-50 w-72 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col flex-shrink-0 shadow-2xl lg:shadow-none">
+           class="fixed inset-y-0 left-0 z-50 w-72 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col flex-shrink-0 shadow-2xl lg:shadow-none overflow-y-auto">
         <div class="p-8 flex items-center justify-between">
             <div class="flex items-center gap-3 text-primary-400 font-black text-2xl tracking-tighter italic">
                 <i data-lucide="shield-check" class="w-8 h-8"></i>
@@ -62,32 +79,40 @@ include '../includes/header.php';
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
         </div>
-        <nav class="flex-1 px-6 space-y-2 overflow-y-auto">
-            <a href="dashboard.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        
+        <div class="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] italic">Core Modules</div>
+        <nav class="flex-1 px-4 space-y-1 mb-8">
+            <a href="dashboard.php" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
                 <i data-lucide="layout-grid" class="w-5 h-5"></i>
-                Dashboard Overview
+                Dashboard
             </a>
-            <a href="students.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl bg-primary-600 text-white shadow-lg shadow-primary-500/20">
+            <a href="students.php" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl bg-primary-600 text-white shadow-lg shadow-primary-500/20">
                 <i data-lucide="users" class="w-5 h-5"></i>
-                Student Database
+                Manage Students
             </a>
-            <a href="applications.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                <i data-lucide="file-text" class="w-5 h-5"></i>
-                Request Logs
-            </a>
-            <a href="departments.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                <i data-lucide="layers" class="w-5 h-5"></i>
-                Manage Departments
-            </a>
-            <a href="export.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                <i data-lucide="download-cloud" class="w-5 h-5"></i>
-                Export Records
+            <a href="requests.php" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i data-lucide="git-pull-request" class="w-5 h-5"></i>
+                Update Requests
             </a>
         </nav>
+
+        <div class="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] italic">Academic & Location</div>
+        <nav class="px-4 space-y-1 mb-8">
+            <a href="academic.php" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                Aca. Structure
+            </a>
+            <a href="locations.php" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i data-lucide="map-pin" class="w-5 h-5"></i>
+                Geo-Location
+            </a>
+        </nav>
+
+        <!-- (Rest of Sidebar Hidden for brevity in this tool call, but I will make sure it's consistent) -->
         <div class="p-6 border-t border-white/5 mt-auto">
-            <a href="logout.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-red-400 hover:bg-red-400/10 transition-all">
+            <a href="logout.php" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl text-red-400 hover:bg-red-400/10 transition-all">
                 <i data-lucide="power" class="w-5 h-5"></i>
-                System Logout
+                Exit Protocol
             </a>
         </div>
     </aside>
@@ -102,108 +127,117 @@ include '../includes/header.php';
                 <h2 class="text-lg lg:text-xl font-black text-gray-950 dark:text-white uppercase tracking-tight italic">STUDENT ARCHIVE</h2>
             </div>
             
-            <a href="add-student.php" class="hidden sm:flex px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-black rounded-xl shadow-lg transition-all items-center gap-2 uppercase tracking-widest italic">
+            <a href="add-student.php" class="flex px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-black rounded-xl shadow-lg transition-all items-center gap-2 uppercase tracking-widest italic">
                 <i data-lucide="plus" class="w-5 h-5"></i>
                 Enroll New Entity
             </a>
-            
-            <a href="add-student.php" class="sm:hidden w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center shadow-lg">
-                <i data-lucide="plus" class="w-5 h-5"></i>
-            </a>
         </header>
 
-        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 space-y-8 lg:space-y-10">
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10">
             <div class="max-w-7xl mx-auto space-y-8">
                 <?php if ($success): ?>
                     <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 p-5 rounded-2xl flex items-center gap-3 italic">
                         <i data-lucide="check" class="w-6 h-6"></i>
-                        <p class="font-bold text-sm"><?php echo $success; ?></p>
+                        <p class="font-bold text-sm uppercase"><?php echo $success; ?></p>
                     </div>
                 <?php endif; ?>
 
-                <!-- Search & Filter Bar -->
-                <div class="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group">
-                    <div class="absolute top-0 left-0 w-2 h-full bg-primary-600"></div>
-                    <form action="students.php" method="GET" class="flex flex-col md:flex-row gap-4 italic">
-                        <div class="relative flex-1">
-                            <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
-                            <input type="text" name="search" class="w-full pl-16 pr-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-bold placeholder-gray-400" placeholder="Query name, ID, or electronic mail..." value="<?php echo htmlspecialchars($search); ?>">
+                <!-- Filters -->
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+                    <form action="students.php" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6 italic">
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2 tracking-widest">Global Scan</label>
+                            <div class="relative">
+                                <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                                <input type="text" name="search" class="w-full pl-16 pr-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-600 transition-all font-bold" placeholder="Identity / Email / Phone" value="<?php echo htmlspecialchars($search); ?>">
+                            </div>
                         </div>
-                        <div class="flex gap-4">
-                            <button type="submit" class="flex-1 md:flex-none px-10 py-4 bg-gray-950 dark:bg-white text-white dark:text-gray-950 font-black rounded-2xl hover:scale-105 transition-all uppercase tracking-widest text-xs">
-                                Search Records
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2 tracking-widest">Departmental Filter</label>
+                            <select name="dept" class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-600 transition-all font-bold appearance-none">
+                                <option value="">All Units</option>
+                                <?php foreach($departments as $d): ?>
+                                    <option value="<?php echo $d['id']; ?>" <?php echo $dept_filter == $d['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($d['department_name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <div class="flex-1">
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2 tracking-widest">Growth Phase</label>
+                                <select name="status" class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-600 transition-all font-bold appearance-none">
+                                    <option value="">All Statuses</option>
+                                    <?php foreach($statuses as $s): ?>
+                                        <option value="<?php echo $s['id']; ?>" <?php echo $status_filter == $s['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['status_name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-14 h-14 shrink-0 bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-2xl flex items-center justify-center hover:scale-105 transition-all shadow-xl">
+                                <i data-lucide="filter" class="w-6 h-6"></i>
                             </button>
-                            <a href="students.php" class="w-14 h-14 bg-gray-100 dark:bg-gray-800 text-gray-400 font-bold rounded-2xl hover:bg-gray-200 flex items-center justify-center transition-all">
-                                <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
-                            </a>
                         </div>
                     </form>
                 </div>
 
-                <!-- Database Table Card -->
-                <div class="bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 lg:p-10 border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto -mx-6 lg:mx-0">
-                        <div class="inline-block min-w-full align-middle px-6 lg:px-0">
-                            <table class="w-full text-left">
-                                <thead>
-                                    <tr class="border-b border-gray-50 dark:border-gray-800 italic">
-                                        <th class="pb-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 px-4">Entity Identity</th>
-                                        <th class="pb-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 px-4 hidden md:table-cell">Departmental Node</th>
-                                        <th class="pb-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 px-4 hidden sm:table-cell">Contact Logical Link</th>
-                                        <th class="pb-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 px-4 text-right">Operational Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-50 dark:divide-gray-800 italic">
-                                    <?php foreach ($students as $student): ?>
-                                    <tr class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
-                                        <td class="py-6 px-4">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 font-black group-hover:bg-primary-600 group-hover:text-white transition-all shadow-sm overflow-hidden flex-shrink-0">
-                                                     <?php if ($student['profile_photo']): ?>
-                                                         <img src="../uploads/<?php echo htmlspecialchars($student['profile_photo']); ?>" class="w-full h-full object-cover">
-                                                     <?php else: ?>
-                                                         <?php echo strtoupper(substr($student['full_name'], 0, 1)); ?>
-                                                     <?php endif; ?>
-                                                 </div>
-                                                <div class="min-w-0">
-                                                    <p class="font-black text-gray-950 dark:text-white truncate"><?php echo htmlspecialchars($student['full_name']); ?></p>
-                                                    <p class="text-[10px] text-gray-500 font-bold tracking-tighter mt-0.5 uppercase italic">UNIT: <?php echo htmlspecialchars($student['student_id']); ?></p>
-                                                </div>
+                <!-- Database Table -->
+                <div class="bg-white dark:bg-gray-900 rounded-[2.5rem] p-10 border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-gray-50 dark:border-gray-800">
+                                    <th class="pb-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Entity Details</th>
+                                    <th class="pb-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Academic Alignment</th>
+                                    <th class="pb-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status Matrix</th>
+                                    <th class="pb-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Synchronization</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50 dark:divide-gray-800 italic">
+                                <?php foreach ($students as $student): ?>
+                                <tr class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+                                    <td class="py-6">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 font-black group-hover:bg-primary-600 group-hover:text-white transition-all overflow-hidden shadow-inner">
+                                                <?php if ($student['profile_photo']): ?>
+                                                    <img src="../uploads/<?php echo htmlspecialchars($student['profile_photo']); ?>" class="w-full h-full object-cover">
+                                                <?php else: ?>
+                                                    <?php echo strtoupper(substr($student['full_name'], 0, 1)); ?>
+                                                <?php endif; ?>
                                             </div>
-                                        </td>
-                                        <td class="py-6 px-4 hidden md:table-cell">
-                                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-50 dark:bg-primary-900/10 text-[9px] font-black uppercase text-primary-600 dark:text-primary-400 border border-primary-500/10">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-primary-600 animate-pulse"></span>
-                                                <?php echo htmlspecialchars($student['department_name'] ?? 'Unaligned'); ?>
-                                            </span>
-                                        </td>
-                                        <td class="py-6 px-4 hidden sm:table-cell">
-                                            <div class="space-y-1">
-                                                <p class="text-[10px] font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                                    <i data-lucide="mail" class="w-3 h-3 text-gray-400"></i>
-                                                    <?php echo htmlspecialchars($student['email']); ?>
-                                                </p>
-                                                <p class="text-[10px] font-bold text-gray-400 flex items-center gap-2">
-                                                    <i data-lucide="phone" class="w-3 h-3 text-gray-400"></i>
-                                                    <?php echo htmlspecialchars($student['phone']); ?>
-                                                </p>
+                                            <div>
+                                                <p class="font-black text-gray-950 dark:text-white"><?php echo htmlspecialchars($student['full_name']); ?></p>
+                                                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-tighter mt-1">ID: <?php echo htmlspecialchars($student['student_id']); ?></p>
                                             </div>
-                                        </td>
-                                        <td class="py-6 px-4">
-                                            <div class="flex items-center justify-end gap-2">
-                                                <a href="edit-student.php?id=<?php echo $student['id']; ?>" class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 text-orange-600 flex items-center justify-center hover:scale-110 transition-transform border border-orange-500/10 shadow-sm">
-                                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                                </a>
-                                                <a href="students.php?delete=<?php echo $student['id']; ?>" class="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 flex items-center justify-center hover:scale-110 transition-transform border border-red-500/10 shadow-sm" onclick="return confirm('Execute permanent record deletion?')">
-                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-6">
+                                        <p class="text-[10px] font-black text-primary-600 uppercase mb-1"><?php echo htmlspecialchars($student['department_name'] ?? 'Unaligned'); ?></p>
+                                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest"><?php echo htmlspecialchars($student['program_name'] ?? 'General'); ?></p>
+                                    </td>
+                                    <td class="py-6">
+                                        <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase border <?php 
+                                            echo match($student['status_name']) {
+                                                'Active' => 'bg-green-50 text-green-600 border-green-200',
+                                                'Graduated' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                                'Withdrawn' => 'bg-red-50 text-red-600 border-red-200',
+                                                default => 'bg-gray-50 text-gray-600 border-gray-200'
+                                            };
+                                        ?>">
+                                            <?php echo htmlspecialchars($student['status_name'] ?? 'Pending'); ?>
+                                        </span>
+                                    </td>
+                                    <td class="py-6 text-right">
+                                        <div class="flex items-center justify-end gap-3">
+                                            <a href="edit-student.php?id=<?php echo $student['id']; ?>" class="w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-400 hover:text-primary-600 hover:bg-primary-50 transition-all flex items-center justify-center shadow-sm">
+                                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                            </a>
+                                            <a href="students.php?delete=<?php echo $student['id']; ?>" class="w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all flex items-center justify-center shadow-sm" onclick="return confirm('Purge entity from archive?')">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

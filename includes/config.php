@@ -139,6 +139,34 @@ try {
         FOREIGN KEY (kebele_id) REFERENCES kebeles(id) ON DELETE SET NULL
     )");
 
+    // Migration: Ensure new columns exist for older installations
+    $columns_to_check = [
+        'student_id' => "VARCHAR(50) NOT NULL UNIQUE AFTER id",
+        'gender' => "ENUM('Male', 'Female', 'Other') NOT NULL DEFAULT 'Male' AFTER full_name",
+        'nationality' => "VARCHAR(50) DEFAULT 'Ethiopian' AFTER gender",
+        'email' => "VARCHAR(100) AFTER nationality",
+        'phone' => "VARCHAR(20) AFTER email",
+        'secondary_phone' => "VARCHAR(20) AFTER phone",
+        'program_id' => "INT AFTER department_id",
+        'batch_id' => "INT AFTER program_id",
+        'semester_id' => "INT AFTER batch_id",
+        'section_id' => "INT AFTER semester_id",
+        'advisor_id' => "INT AFTER section_id",
+        'enrollment_status_id' => "INT AFTER advisor_id",
+        'kebele_id' => "INT AFTER enrollment_status_id",
+        'address_detail' => "TEXT AFTER kebele_id",
+        'profile_photo' => "VARCHAR(255) DEFAULT NULL AFTER address_detail",
+        'created_at' => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+        'updated_at' => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+    ];
+
+    foreach ($columns_to_check as $col => $definition) {
+        $check = $pdo->query("SHOW COLUMNS FROM students LIKE '$col'")->fetch();
+        if (!$check) {
+            $pdo->exec("ALTER TABLE students ADD $col $definition");
+        }
+    }
+
     $pdo->exec("CREATE TABLE IF NOT EXISTS guardians (
         id INT AUTO_INCREMENT PRIMARY KEY,
         student_id INT,
@@ -174,6 +202,29 @@ try {
         FOREIGN KEY (student_link_id) REFERENCES students(id) ON DELETE CASCADE,
         FOREIGN KEY (department_link_id) REFERENCES departments(id) ON DELETE SET NULL
     )");
+
+    // Migration: Ensure new columns exist for users
+    $user_cols = [
+        'role_id' => "INT AFTER password",
+        'student_link_id' => "INT DEFAULT NULL AFTER role_id",
+        'department_link_id' => "INT DEFAULT NULL AFTER student_link_id",
+        'is_active' => "TINYINT(1) DEFAULT 1 AFTER department_link_id"
+    ];
+
+    foreach ($user_cols as $col => $definition) {
+        $check = $pdo->query("SHOW COLUMNS FROM users LIKE '$col'")->fetch();
+        if (!$check) {
+            $pdo->exec("ALTER TABLE users ADD $col $definition");
+            
+            // If we just added role_id, assign 'Admin' to existing users as a fallback
+            if ($col === 'role_id') {
+                $adminRole = $pdo->query("SELECT id FROM roles WHERE role_name = 'Admin'")->fetch();
+                if ($adminRole) {
+                    $pdo->exec("UPDATE users SET role_id = {$adminRole['id']} WHERE role_id IS NULL");
+                }
+            }
+        }
+    }
 
     // 6. Communication & Logs
     $pdo->exec("CREATE TABLE IF NOT EXISTS message_templates (
