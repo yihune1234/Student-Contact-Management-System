@@ -43,7 +43,12 @@ try {
         FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL
     )");
 
-    // Users Table
+    // Migration: Add profile_photo to students if not exists
+    try {
+        $pdo->exec("ALTER TABLE students ADD COLUMN profile_photo VARCHAR(255) DEFAULT NULL AFTER address");
+    } catch (Exception $e) {
+        // Column probably already exists
+    }
     $pdo->exec("CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(50) NOT NULL UNIQUE,
