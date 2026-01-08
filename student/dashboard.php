@@ -64,8 +64,12 @@ include '../includes/header.php';
                     <p class="text-sm font-bold truncate max-w-[150px]"><?php echo htmlspecialchars($student['full_name']); ?></p>
                     <p class="text-xs text-gray-500"><?php echo htmlspecialchars($student['student_id']); ?></p>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-700 dark:text-primary-300 font-bold">
-                    <?php echo strtoupper(substr($student['full_name'], 0, 1)); ?>
+                <div class="w-10 h-10 rounded-full overflow-hidden bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-700 dark:text-primary-300 font-bold border border-gray-100 dark:border-gray-700">
+                    <?php if ($student['profile_photo']): ?>
+                        <img src="../uploads/<?php echo htmlspecialchars($student['profile_photo']); ?>" class="w-full h-full object-cover">
+                    <?php else: ?>
+                        <?php echo strtoupper(substr($student['full_name'], 0, 1)); ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </header>

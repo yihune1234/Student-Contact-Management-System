@@ -127,9 +127,13 @@ include '../includes/header.php';
                             <tr class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
                                 <td class="py-6 px-4">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 font-black group-hover:bg-primary-600 group-hover:text-white transition-all shadow-sm">
-                                            <?php echo strtoupper(substr($student['full_name'], 0, 1)); ?>
-                                        </div>
+                                        <div class="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 font-black group-hover:bg-primary-600 group-hover:text-white transition-all shadow-sm overflow-hidden">
+                                             <?php if ($student['profile_photo']): ?>
+                                                 <img src="../uploads/<?php echo htmlspecialchars($student['profile_photo']); ?>" class="w-full h-full object-cover">
+                                             <?php else: ?>
+                                                 <?php echo strtoupper(substr($student['full_name'], 0, 1)); ?>
+                                             <?php endif; ?>
+                                         </div>
                                         <div>
                                             <p class="font-black text-gray-950 dark:text-white"><?php echo htmlspecialchars($student['full_name']); ?></p>
                                             <p class="text-xs text-gray-500 font-bold tracking-tighter mt-0.5"><?php echo htmlspecialchars($student['student_id']); ?></p>
