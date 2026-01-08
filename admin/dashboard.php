@@ -9,6 +9,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 // Stats
 $total_students = $pdo->query("SELECT COUNT(*) FROM students")->fetchColumn();
 $total_departments = $pdo->query("SELECT COUNT(*) FROM departments")->fetchColumn();
+$total_apps = $pdo->query("SELECT COUNT(*) FROM applications WHERE status = 'pending'")->fetchColumn();
 
 // Latest Students
 $latest_students = $pdo->query("SELECT s.*, d.department_name FROM students s LEFT JOIN departments d ON s.department_id = d.id ORDER BY s.created_at DESC LIMIT 5")->fetchAll();
