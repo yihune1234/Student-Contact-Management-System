@@ -2,7 +2,7 @@
 require_once '../includes/config.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 
@@ -54,7 +54,11 @@ include '../includes/header.php';
             </a>
             <a href="students.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl bg-primary-600 text-white shadow-lg shadow-primary-500/20">
                 <i data-lucide="users" class="w-5 h-5"></i>
-                Student Database
+                Students
+            </a>
+            <a href="applications.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                Applications
             </a>
             <a href="departments.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
                 <i data-lucide="layers" class="w-5 h-5"></i>
@@ -78,7 +82,7 @@ include '../includes/header.php';
             <h2 class="text-xl font-black text-gray-950 dark:text-white uppercase tracking-tight italic">STUDENT ARCHIVE</h2>
             <a href="add-student.php" class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-black rounded-xl shadow-lg transition-all flex items-center gap-2">
                 <i data-lucide="plus" class="w-5 h-5"></i>
-                Enroll New Student
+                Enroll New Entity
             </a>
         </header>
 

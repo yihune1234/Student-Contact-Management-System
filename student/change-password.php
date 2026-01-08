@@ -2,7 +2,7 @@
 require_once '../includes/config.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 
