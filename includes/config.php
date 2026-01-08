@@ -38,6 +38,7 @@ try {
         phone VARCHAR(20),
         email VARCHAR(100),
         address TEXT,
+        profile_photo VARCHAR(255) DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL
     )");
