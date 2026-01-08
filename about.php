@@ -1,155 +1,167 @@
 <?php
 require_once 'includes/config.php';
-$page_title = "Technical Specifications - SCMS Architecture";
+$page_title = "Vision & Architecture - SCMS Institutional Nexus";
 include 'includes/header.php';
 ?>
 
 <div class="relative min-h-screen overflow-hidden bg-slate-50 dark:bg-gray-950 font-sans selection:bg-primary-500/30">
-    <!-- Background Decor -->
+    <!-- Ambient Neural Background -->
     <div class="absolute inset-0 z-0 pointer-events-none">
-        <div class="absolute top-[20%] left-[60%] w-[40%] h-[40%] bg-primary-600/10 rounded-full blur-[120px] animate-pulse-slow"></div>
-        <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-indigo-600/10 rounded-full blur-[120px]"></div>
-        <div class="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 30px 30px;"></div>
+        <div class="absolute top-0 right-0 w-[50%] h-[50%] bg-primary-600/5 rounded-full blur-[150px] animate-pulse-slow"></div>
+        <div class="absolute bottom-0 left-0 w-[40%] h-[40%] bg-indigo-600/5 rounded-full blur-[120px]"></div>
+        <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.08]" style="background-image: radial-gradient(#444 1px, transparent 1px); background-size: 40px 40px;"></div>
     </div>
 
-    <section class="relative z-10 pt-32 pb-24 px-6 lg:px-20 max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="mb-24 space-y-6">
-            <h4 class="text-[10px] font-black uppercase tracking-[0.5em] text-primary-500 italic">Core Mission & Logic</h4>
-            <h1 class="text-6xl lg:text-8xl font-black text-gray-950 dark:text-white tracking-tighter leading-none italic uppercase">
-                Architecture<br>of <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-500">Excellence.</span>
+    <!-- Hero Section -->
+    <section class="relative z-10 pt-32 pb-20 px-6 lg:px-20 max-w-7xl mx-auto">
+        <div class="mb-24 space-y-8">
+            <div class="inline-flex items-center gap-3 px-4 py-2 bg-primary-600/10 border border-primary-500/20 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-primary-600 animate-ping"></span>
+                <span class="text-[10px] font-black uppercase tracking-[0.4em] text-primary-600 italic">Institutional Dossier v2.0</span>
+            </div>
+            <h1 class="text-6xl lg:text-9xl font-black text-gray-950 dark:text-white tracking-tighter leading-[0.85] italic uppercase">
+                The Nexus of<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-500">Intelligence.</span>
             </h1>
+            <p class="text-xl lg:text-3xl text-gray-500 dark:text-gray-400 font-medium italic max-w-3xl leading-relaxed">
+                SCMS is the definitive architectural solution for synchronizing student identities and institutional communication loops.
+            </p>
         </div>
 
-        <div class="grid lg:grid-cols-12 gap-16 lg:gap-24">
-            <!-- Left Side: Main Narrative -->
-            <div class="lg:col-span-7 space-y-12">
-                <div class="space-y-8 text-xl lg:text-2xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
-                    <p>
-                        The Student Contact Management System (SCMS) is engineered to be the definitive institutional node for student information synchronization.
-                    </p>
-                    <p>
-                        By combining high-fidelity administrative logic with a frictionless user interface, SCMS eliminates the traditional bottlenecks of student data management.
-                    </p>
-                </div>
+        <!-- Vision & Mission Matrix -->
+        <div class="grid lg:grid-cols-2 gap-10 mb-32">
+            <div class="bg-white dark:bg-gray-900 p-12 rounded-[3.5rem] border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-primary-600/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-primary-600/10 transition-colors"></div>
+                <h3 class="text-[10px] font-black uppercase tracking-[0.5em] text-primary-500 mb-8 italic">Project Vision</h3>
+                <p class="text-2xl font-black text-gray-950 dark:text-white italic tracking-tight leading-snug">
+                    To become the global gold standard for <span class="text-primary-600">frictionless student information flow</span>, where data is not just stored, but intelligently synchronized across all institutional touchpoints.
+                </p>
+            </div>
+            <div class="bg-gray-950 p-12 rounded-[3.5rem] text-white shadow-2xl relative overflow-hidden group">
+                <div class="absolute bottom-0 left-0 w-32 h-32 bg-indigo-600/10 rounded-full blur-2xl -ml-16 -mb-16"></div>
+                <h3 class="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-400 mb-8 italic">Project Mission</h3>
+                <p class="text-2xl font-black italic tracking-tight leading-snug">
+                    Our mission is to empower educational institutions with <span class="text-indigo-400">high-fidelity digital infrastructure</span> that protects student privacy while maximizing administrative transparency and speed.
+                </p>
+            </div>
+        </div>
 
-                <!-- Spec Grid -->
-                <div class="grid sm:grid-cols-2 gap-8 pt-10">
-                    <div class="p-8 bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-2xl group">
-                        <i data-lucide="zap" class="w-8 h-8 text-yellow-500 mb-6 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="text-xl font-black text-gray-950 dark:text-white mb-2 italic">Low Latency</h3>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed italic">Optimized SQL queries ensure sub-0.05ms record retrieval times.</p>
-                    </div>
-                    <div class="p-8 bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-2xl group">
-                        <i data-lucide="lock" class="w-8 h-8 text-primary-600 mb-6 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="text-xl font-black text-gray-950 dark:text-white mb-2 italic">Atomic Security</h3>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed italic">Role-based access controls and encrypted secret handling protocols.</p>
-                    </div>
-                    <div class="p-8 bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-2xl group">
-                        <i data-lucide="layers" class="w-8 h-8 text-indigo-500 mb-6 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="text-xl font-black text-gray-950 dark:text-white mb-2 italic">Modular Core</h3>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed italic">Scalable departmental nodes allowing for infinite institutional growth.</p>
-                    </div>
-                    <div class="p-8 bg-white dark:bg-gray-900 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-2xl group">
-                        <i data-lucide="cpu" class="w-8 h-8 text-purple-600 mb-6 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="text-xl font-black text-gray-950 dark:text-white mb-2 italic">Automated Sync</h3>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed italic">Real-time profile updates across all administrative access points.</p>
-                    </div>
-                </div>
+        <!-- Advanced Features Matrix -->
+        <div class="space-y-16">
+            <div class="text-center space-y-4">
+                <h4 class="text-[10px] font-black uppercase tracking-[0.5em] text-primary-500 italic">Functional Ecosystem</h4>
+                <h2 class="text-5xl font-black text-gray-950 dark:text-white tracking-tighter italic uppercase">Feature Set.</h2>
             </div>
 
-            <!-- Right Side: Stats / Visuals -->
-            <div class="lg:col-span-5 space-y-12">
-                <div class="bg-gray-950 p-12 rounded-[4rem] text-white space-y-10 relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-primary-600/10 group-hover:bg-primary-600/20 transition-all"></div>
-                    
-                    <div class="relative z-10 space-y-4">
-                        <h3 class="text-[10px] font-black uppercase tracking-[0.5em] text-primary-500 italic">Operational Status</h3>
-                        <p class="text-4xl font-black italic tracking-tighter leading-none">SYSTEM<br>UPTIME: 99.9%</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-10 bg-white dark:bg-gray-900 rounded-[3rem] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all group">
+                    <div class="w-14 h-14 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center text-blue-600 mb-8 group-hover:scale-110 transition-transform">
+                        <i data-lucide="activity" class="w-7 h-7"></i>
                     </div>
-
-                    <div class="relative z-10 pt-10 border-t border-white/10 space-y-8">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest italic">Database Integrity</span>
-                            <span class="text-xs font-black text-primary-500 uppercase tracking-widest">Verified</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest italic">Logic Synchronization</span>
-                            <span class="text-xs font-black text-primary-500 uppercase tracking-widest">Active</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest italic">Encrypted Tunnels</span>
-                            <span class="text-xs font-black text-primary-500 uppercase tracking-widest">Enabled</span>
-                        </div>
-                    </div>
-
-                    <div class="relative z-10 pt-10">
-                        <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                            <div class="w-[85%] h-full bg-primary-600 animate-pulse"></div>
-                        </div>
-                        <p class="mt-4 text-[8px] font-black uppercase tracking-widest text-center text-gray-500">Institutional Processing Load: Nominal</p>
-                    </div>
+                    <h3 class="text-xl font-black text-gray-950 dark:text-white mb-4 italic uppercase tracking-tight">Request Logs</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium italic leading-relaxed">A specialized transmission engine for students to send signals (applications) directly to the central administrative core.</p>
                 </div>
 
-                <div class="p-10 bg-white dark:bg-gray-900 rounded-[3rem] border border-gray-100 dark:border-gray-800 shadow-xl space-y-8 text-center italic">
-                    <div class="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-3xl mx-auto flex items-center justify-center text-primary-600 shadow-inner">
-                        <i data-lucide="graduation-cap" class="w-10 h-10"></i>
+                <div class="p-10 bg-white dark:bg-gray-900 rounded-[3rem] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all group">
+                    <div class="w-14 h-14 bg-purple-50 dark:bg-purple-900/20 rounded-2xl flex items-center justify-center text-purple-600 mb-8 group-hover:scale-110 transition-transform">
+                        <i data-lucide="fingerprint" class="w-7 h-7"></i>
                     </div>
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed">SCMS is more than a database; it is the institutional nervous system for student-faculty interaction.</p>
+                    <h3 class="text-xl font-black text-gray-950 dark:text-white mb-4 italic uppercase tracking-tight">Identity Vault</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium italic leading-relaxed">Encrypted storage for biological identification photos and contact nodes, ensuring zero-leak institutional security.</p>
+                </div>
+
+                <div class="p-10 bg-white dark:bg-gray-900 rounded-[3rem] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all group">
+                    <div class="w-14 h-14 bg-orange-50 dark:bg-orange-900/20 rounded-2xl flex items-center justify-center text-orange-600 mb-8 group-hover:scale-110 transition-transform">
+                        <i data-lucide="database" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-gray-950 dark:text-white mb-4 italic uppercase tracking-tight">CSV Extraction</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium italic leading-relaxed">One-click digital extraction of student databases for physical archival or advanced institutional analytics.</p>
+                </div>
+
+                <div class="p-10 bg-white dark:bg-gray-900 rounded-[3rem] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all group">
+                    <div class="w-14 h-14 bg-green-50 dark:bg-green-900/20 rounded-2xl flex items-center justify-center text-green-600 mb-8 group-hover:scale-110 transition-transform">
+                        <i data-lucide="layers" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-gray-950 dark:text-white mb-4 italic uppercase tracking-tight">Unit Mapping</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium italic leading-relaxed">Sophisticated departmental mapping that isolates and routes students to their specific institutional nodes.</p>
+                </div>
+
+                <div class="p-10 bg-white dark:bg-gray-900 rounded-[3rem] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all group">
+                    <div class="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl flex items-center justify-center text-indigo-600 mb-8 group-hover:scale-110 transition-transform">
+                        <i data-lucide="smartphone" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-gray-950 dark:text-white mb-4 italic uppercase tracking-tight">Adaptive UI</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium italic leading-relaxed">A precision-engineered interface that reconfigures its logic matrix for mobile, tablet, and desktop environments.</p>
+                </div>
+
+                <div class="p-10 bg-white dark:bg-gray-900 rounded-[3rem] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all group">
+                    <div class="w-14 h-14 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center text-red-600 mb-8 group-hover:scale-110 transition-transform">
+                        <i data-lucide="shield-check" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-gray-950 dark:text-white mb-4 italic uppercase tracking-tight">Security Node</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium italic leading-relaxed">Multi-layer role authentication providing separate operational environments for Students and Administrators.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Detailed Tech Stack Block - Refined to System Foundation -->
-    <section class="relative z-10 py-24 px-6 lg:px-20 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 overflow-hidden">
-        <div class="absolute right-0 top-0 w-96 h-96 bg-primary-600/5 rounded-full blur-[100px] -mr-48 -mt-48"></div>
-        
-        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
-             <div>
-                 <h2 class="text-4xl font-black text-gray-950 dark:text-white tracking-tighter italic uppercase mb-8">System Foundation.</h2>
-                 <div class="space-y-10">
-                     <div class="group">
-                         <div class="flex items-center gap-4 mb-3">
-                             <div class="w-8 h-8 rounded-xl bg-primary-600/20 flex items-center justify-center text-primary-600">
-                                 <i data-lucide="database" class="w-4 h-4"></i>
-                             </div>
-                             <p class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em] italic leading-none">Data Integrity Layer</p>
-                         </div>
-                         <p class="text-sm text-gray-600 dark:text-gray-400 font-medium italic pl-12">Utilizing **Relational Logic (MySQL)** and **Type-Safe Abstractions (PDO)** to ensure student records are immutable and instantly retrievable.</p>
-                     </div>
+    <!-- Technology Core Section -->
+    <section class="relative z-10 py-32 px-6 lg:px-20 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+            <div class="space-y-12">
+                <div class="space-y-4">
+                    <h2 class="text-5xl font-black text-gray-950 dark:text-white tracking-tighter italic uppercase">Technical Power.</h2>
+                    <p class="text-gray-500 dark:text-gray-400 font-medium italic text-lg">The engine behind the SCMS institution.</p>
+                </div>
+                
+                <div class="space-y-10">
+                    <div class="flex gap-6 italic group">
+                        <div class="w-12 h-12 bg-primary-600/10 rounded-2xl flex items-center justify-center text-primary-600 flex-shrink-0 shadow-inner group-hover:bg-primary-600 group-hover:text-white transition-all">
+                            <i data-lucide="database" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-gray-950 dark:text-white uppercase tracking-widest mb-1">PDO Relational Engine</h4>
+                            <p class="text-xs text-gray-500 leading-relaxed">Secures the SCMS database against injection attacks while providing sub-millisecond query performance.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6 italic group">
+                        <div class="w-12 h-12 bg-indigo-600/10 rounded-2xl flex items-center justify-center text-indigo-600 flex-shrink-0 shadow-inner group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                            <i data-lucide="code-2" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-gray-950 dark:text-white uppercase tracking-widest mb-1">Tailwind Logic Matrix</h4>
+                            <p class="text-xs text-gray-500 leading-relaxed">A utility-first CSS framework ensuring SCMS remains lightweight, fast, and visually consistent across all portals.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6 italic group">
+                        <div class="w-12 h-12 bg-purple-600/10 rounded-2xl flex items-center justify-center text-purple-600 flex-shrink-0 shadow-inner group-hover:bg-purple-600 group-hover:text-white transition-all">
+                            <i data-lucide="zap" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-gray-950 dark:text-white uppercase tracking-widest mb-1">Alpine Node State</h4>
+                            <p class="text-xs text-gray-500 leading-relaxed">Powers interactive UI elements with zero performance overhead, keeping the interface snappy and alive.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                     <div class="group">
-                         <div class="flex items-center gap-4 mb-3">
-                             <div class="w-8 h-8 rounded-xl bg-indigo-600/20 flex items-center justify-center text-indigo-600">
-                                 <i data-lucide="layout" class="w-4 h-4"></i>
-                             </div>
-                             <p class="text-[10px] font-black uppercase text-indigo-500 tracking-[0.3em] italic leading-none">Interface Engine</p>
-                         </div>
-                         <p class="text-sm text-gray-600 dark:text-gray-400 font-medium italic pl-12">Powered by a **Modern Utility Matrix (Tailwind CSS)** and **Alpine state logic** for a friction-less experience across any device resolution.</p>
-                     </div>
-
-                     <div class="group">
-                         <div class="flex items-center gap-4 mb-3">
-                             <div class="w-8 h-8 rounded-xl bg-purple-600/20 flex items-center justify-center text-purple-600">
-                                 <i data-lucide="cpu" class="w-4 h-4"></i>
-                             </div>
-                             <p class="text-[10px] font-black uppercase text-purple-500 tracking-[0.3em] italic leading-none">Logic Execution</p>
-                         </div>
-                         <p class="text-sm text-gray-600 dark:text-gray-400 font-medium italic pl-12">High-performance **Server-Side Architecture (PHP 8.x)** providing near-instant logic processing and encrypted institutional session security.</p>
-                     </div>
-                 </div>
-             </div>
-             
-             <div class="bg-slate-50 dark:bg-gray-800/30 p-12 rounded-[4rem] border border-dashed border-gray-200 dark:border-gray-700 text-center space-y-8 relative group">
-                 <div class="absolute inset-0 bg-primary-600/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[4rem]"></div>
-                 <i data-lucide="shield-check" class="w-16 h-16 text-primary-500 mx-auto opacity-50 group-hover:opacity-100 transition-all"></i>
-                 <p class="text-xs font-black uppercase tracking-[0.3em] text-gray-400 italic">Security Audit: PASS</p>
-                 <h3 class="text-2xl font-black text-gray-950 dark:text-white italic tracking-tighter uppercase">Ready for Deployment</h3>
-                 <a href="login.php" class="inline-block px-10 py-4 bg-primary-600 text-white font-black text-sm rounded-2xl shadow-xl hover:scale-105 transition-all uppercase tracking-widest relative z-10">
-                     Enter Gateway
-                 </a>
-             </div>
+            <div class="relative">
+                <div class="bg-gray-950 p-16 rounded-[4rem] text-center space-y-8 relative z-10 overflow-hidden">
+                    <div class="absolute inset-0 bg-primary-600/10 animate-pulse"></div>
+                    <div class="relative z-10 w-24 h-24 bg-white/10 rounded-[2.5rem] flex items-center justify-center mx-auto text-primary-500 border border-white/10 shadow-2xl">
+                        <i data-lucide="shield-check" class="w-12 h-12"></i>
+                    </div>
+                    <div class="relative z-10 space-y-2">
+                        <h3 class="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">Ready for<br>Deployment.</h3>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.5em] italic">Institutional Clearance: GRANTED</p>
+                    </div>
+                    <a href="login.php" class="relative z-10 inline-block px-12 py-5 bg-primary-600 text-white font-black text-sm rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest italic group">
+                        Enter Matrix
+                    </a>
+                </div>
+                <!-- Decorative Orbit -->
+                <div class="absolute -inset-10 border border-primary-500/20 rounded-[5rem] animate-spin-slow pointer-events-none"></div>
+                <div class="absolute -inset-20 border border-indigo-500/10 rounded-[6rem] animate-spin-reverse pointer-events-none"></div>
+            </div>
         </div>
     </section>
 </div>
@@ -159,8 +171,22 @@ include 'includes/header.php';
     0%, 100% { opacity: 0.3; transform: scale(1); }
     50% { opacity: 0.6; transform: scale(1.1); }
 }
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes spin-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
 .animate-pulse-slow {
     animation: pulse-slow 8s ease-in-out infinite;
+}
+.animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
+}
+.animate-spin-reverse {
+    animation: spin-reverse 25s linear infinite;
 }
 </style>
 
