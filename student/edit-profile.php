@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
         if (in_array($ext, $allowed)) {
-            $new_name = "stu_" . $student_id . "_" . time() . "." . ext;
+            $new_name = "stu_" . $student_id . "_" . time() . "." . $ext;
             $upload_path = "../uploads/" . $new_name;
 
             if (move_uploaded_file($_FILES['profile_photo']['tmp_name'], $upload_path)) {
