@@ -52,6 +52,17 @@ try {
         FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
     )");
 
+    // Applications Table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS applications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        student_id VARCHAR(50) NOT NULL,
+        subject VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+    )");
+
     // 5. Seed Initial Data if tables are empty
     
     // Seed Departments

@@ -56,3 +56,28 @@
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-gray-900 font-sans text-gray-900 dark:text-gray-100 antialiased">
+<?php 
+// Only show public navbar if not on an admin or student dashboard page
+$current_page = $_SERVER['PHP_SELF'];
+$is_public = !strpos($current_page, '/admin/') && !strpos($current_page, '/student/');
+$root_path = strpos($current_page, '/admin/') || strpos($current_page, '/student/') ? '../' : './';
+
+if ($is_public || !isset($_SESSION['user_id'])): 
+?>
+<nav class="fixed top-0 left-0 w-full z-50 glass border-b border-white/20 px-10 py-4 flex items-center justify-between">
+    <a href="<?php echo $root_path; ?>index.php" class="flex items-center gap-2 text-primary-600 dark:text-primary-400 font-black text-2xl tracking-tighter italic">
+        <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+        <span>SCMS</span>
+    </a>
+    <div class="flex items-center gap-10">
+        <a href="<?php echo $root_path; ?>index.php" class="text-sm font-bold hover:text-primary-600 transition-colors">Home</a>
+        <a href="<?php echo $root_path; ?>about.php" class="text-sm font-bold hover:text-primary-600 transition-colors">About</a>
+        <?php if(isset($_SESSION['user_id'])): ?>
+            <a href="<?php echo $_SESSION['role'] == 'admin' ? $root_path.'admin/dashboard.php' : $root_path.'student/dashboard.php'; ?>" class="px-6 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl shadow-lg">Dashboard</a>
+        <?php else: ?>
+            <a href="<?php echo $root_path; ?>login.php" class="px-6 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl shadow-lg hover:bg-primary-700 transition-all">Login</a>
+        <?php endif; ?>
+    </div>
+</nav>
+<div class="h-20"></div>
+<?php endif; ?>

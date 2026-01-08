@@ -14,10 +14,8 @@
    Place the project folder in your local server's root directory (e.g., `C:\xampp\htdocs\Student-Contact-Management-System`).
 
 2. **Database Setup**:
-   - Open **phpMyAdmin** (`http://localhost/phpmyadmin`).
-   - Create a new database named `student_contact_db`.
-   - Click on the database, go to the **Import** tab.
-   - Choose the `database.sql` file from the project root and click **Import**.
+   - The system features **Automatic Setup**. Upon first visit, the database and tables will be created automatically if you have MySQL running.
+   - Alternatively, you can manually import `database.sql` into **phpMyAdmin** if preferred.
 
 3. **Configuration**:
    - The database connection settings are in `includes/config.php`.
