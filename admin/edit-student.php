@@ -37,104 +37,129 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $address = $_POST['address'];
 
     if (empty($full_name)) {
-        $error = "Full name is required.";
+        $error = "Full name is mandatory.";
     } else {
         try {
             $stmt = $pdo->prepare("UPDATE students SET full_name = ?, department_id = ?, phone = ?, email = ?, address = ? WHERE id = ?");
             $stmt->execute([$full_name, $department_id, $phone, $email, $address, $id]);
-            $success = "Student record updated successfully!";
+            $success = "Entity record updated successfully.";
             
             // Re-fetch updated data
             $stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
             $stmt->execute([$id]);
             $student = $stmt->fetch();
         } catch (Exception $e) {
-            $error = "Error updating record: " . $e->getMessage();
+            $error = "Update failure: " . $e->getMessage();
         }
     }
 }
+
+$page_title = "Edit Record - Admin SCMS";
+include '../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Student - Admin SCMS</title>
-    <link rel="stylesheet" href="../assets/style.css">
-</head>
-<body>
-    <div class="dashboard-layout">
-        <div class="sidebar">
-            <h1>Admin Panel</h1>
-            <nav>
-                <a href="dashboard.php" class="nav-link">Dashboard</a>
-                <a href="students.php" class="nav-link active">Manage Students</a>
-                <a href="departments.php" class="nav-link">Departments</a>
-                <a href="export.php" class="nav-link">Export Data</a>
-                <a href="logout.php" class="nav-link">Logout</a>
-            </nav>
-        </div>
-
-        <div class="main-content">
-            <div class="header">
-                <h2>Edit Student Record</h2>
-                <a href="students.php" class="btn btn-warning" style="width: auto;">Back to List</a>
+<div class="flex h-screen overflow-hidden">
+    <!-- Sidebar... -->
+    <aside class="w-72 bg-gray-900 text-white hidden md:flex flex-col">
+        <div class="p-8">
+            <div class="flex items-center gap-3 text-primary-400 font-black text-2xl tracking-tighter">
+                <i data-lucide="shield-check" class="w-8 h-8"></i>
+                <span>ADMIN PANEL</span>
             </div>
+        </div>
+        <nav class="flex-1 px-6 space-y-2">
+            <a href="dashboard.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                Dashboard
+            </a>
+            <a href="students.php" class="flex items-center gap-3 px-4 py-3.5 text-sm font-bold rounded-2xl bg-primary-600 text-white shadow-lg shadow-primary-500/20">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                Database
+            </a>
+            <!-- ... -->
+        </nav>
+    </aside>
 
+    <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950">
+        <header class="h-20 bg-white dark:bg-gray-900 border-bottom border-gray-100 dark:border-gray-800 px-10 flex items-center justify-between sticky top-0 z-20">
+            <h2 class="text-xl font-black text-gray-950 dark:text-white uppercase tracking-tight italic">MODIFY ENTITY RECORD</h2>
+            <div class="flex gap-4">
+                <a href="students.php" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm font-black rounded-xl transition-all">
+                    Dismiss
+                </a>
+            </div>
+        </header>
+
+        <div class="p-10 max-w-4xl mx-auto">
             <?php if ($error): ?>
-                <div class="alert alert-danger"><?php echo $error; ?></div>
+                <div class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900 text-red-600 p-5 rounded-2xl mb-8 font-bold text-sm">
+                    <?php echo $error; ?>
+                </div>
             <?php endif; ?>
-
             <?php if ($success): ?>
-                <div class="alert alert-success"><?php echo $success; ?></div>
+                <div class="bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900 text-green-600 p-5 rounded-2xl mb-8 font-bold text-sm">
+                    <?php echo $success; ?>
+                </div>
             <?php endif; ?>
 
-            <div class="table-container" style="padding: 2rem;">
-                <form action="edit-student.php?id=<?php echo $id; ?>" method="POST">
-                    <div class="form-group">
-                        <label>Student ID (Cannot be changed)</label>
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($student['student_id']); ?>" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="full_name">Full Name*</label>
-                        <input type="text" name="full_name" id="full_name" class="form-control" value="<?php echo htmlspecialchars($student['full_name']); ?>" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="department_id">Department</label>
-                        <select name="department_id" id="department_id" class="form-control">
-                            <option value="">Select Department</option>
-                            <?php foreach ($departments as $dept): ?>
-                                <option value="<?php echo $dept['id']; ?>" <?php echo ($student['department_id'] == $dept['id']) ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($dept['department_name']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div class="form-group">
-                            <label for="phone">Phone</label>
-                            <input type="text" name="phone" id="phone" class="form-control" value="<?php echo htmlspecialchars($student['phone']); ?>">
+            <div class="bg-white dark:bg-gray-900 rounded-[2.5rem] p-12 border border-gray-100 dark:border-gray-800 shadow-sm">
+                <form action="edit-student.php?id=<?php echo $id; ?>" method="POST" class="space-y-10">
+                    <section>
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-primary-500 mb-8 border-b border-gray-100 dark:border-gray-800 pb-4">Fixed Identity Node</h4>
+                        <div>
+                            <label class="block text-xs font-black uppercase text-gray-400 mb-3 ml-1">Entity Serial ID (Read-only)</label>
+                            <input type="text" class="w-full px-6 py-4 bg-gray-100 dark:bg-gray-800 border-none rounded-2xl outline-none font-black text-gray-500 cursor-not-allowed" value="<?php echo htmlspecialchars($student['student_id']); ?>" disabled>
                         </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" value="<?php echo htmlspecialchars($student['email']); ?>">
+                    </section>
+
+                    <section>
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-primary-500 mb-8 border-b border-gray-100 dark:border-gray-800 pb-4">Evolvable Attributes</h4>
+                        <div class="grid grid-cols-1 gap-8">
+                            <div>
+                                <label class="block text-xs font-black uppercase text-gray-400 mb-3 ml-1">Full Legal Entity Name*</label>
+                                <input type="text" name="full_name" class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-bold" value="<?php echo htmlspecialchars($student['full_name']); ?>" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black uppercase text-gray-400 mb-3 ml-1">Departmental Allocation</label>
+                                <select name="department_id" class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-bold appearance-none cursor-pointer">
+                                    <option value="">Select Allocation</option>
+                                    <?php foreach ($departments as $dept): ?>
+                                        <option value="<?php echo $dept['id']; ?>" <?php echo ($student['department_id'] == $dept['id']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($dept['department_name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <div class="form-group">
-                        <label for="address">Address</label>
-                        <textarea name="address" id="address" class="form-control" rows="3"><?php echo htmlspecialchars($student['address']); ?></textarea>
-                    </div>
+                    <section>
+                        <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-primary-500 mb-8 border-b border-gray-100 dark:border-gray-800 pb-4">Connection Interfaces</h4>
+                        <div class="grid grid-cols-2 gap-8 mb-8">
+                            <div>
+                                <label class="block text-xs font-black uppercase text-gray-400 mb-3 ml-1">Cellular Link</label>
+                                <input type="text" name="phone" class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-bold" value="<?php echo htmlspecialchars($student['phone']); ?>">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black uppercase text-gray-400 mb-3 ml-1">Electronic Mail Logic</label>
+                                <input type="email" name="email" class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-bold" value="<?php echo htmlspecialchars($student['email']); ?>">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase text-gray-400 mb-3 ml-1">Geographic Coordinates (Address)</label>
+                            <textarea name="address" rows="3" class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-bold"><?php echo htmlspecialchars($student['address']); ?></textarea>
+                        </div>
+                    </section>
 
-                    <button type="submit" class="btn btn-primary" style="width: auto;">Update Student Info</button>
-                    <a href="students.php" class="btn" style="width: auto; text-decoration: none; color: var(--text-muted);">Cancel</a>
+                    <div class="pt-6">
+                        <button type="submit" class="w-full py-5 bg-primary-600 hover:bg-primary-700 text-white font-black rounded-3xl shadow-2xl shadow-primary-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                            COMMIT RECORD UPDATE
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
-    </div>
-</body>
-</html>
+    </main>
+</div>
+
+<?php include '../includes/footer.php'; ?>
