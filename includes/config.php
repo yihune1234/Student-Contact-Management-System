@@ -19,8 +19,6 @@ try {
     $pdo->exec("CREATE DATABASE IF NOT EXISTS `$db` CHARACTER SET $charset COLLATE utf8mb4_unicode_ci");
     
     // 3. Connect to the specific database
-    $pdo->exec("USE `$db` text/plain");
-    // Actually, it's better to just reconnect with the dbname for full DSN consistency
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=$charset", $user, $pass, $options);
 
     // 4. Create Tables if they don't exist
