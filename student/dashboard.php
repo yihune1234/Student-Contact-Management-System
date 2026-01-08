@@ -2,7 +2,7 @@
 require_once '../includes/config.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 
@@ -29,15 +29,19 @@ include '../includes/header.php';
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 Dashboard
             </a>
-            <a href="profile.php" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50">
+            <a href="profile.php" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50 transition-all">
                 <i data-lucide="user" class="w-5 h-5"></i>
                 My Profile
             </a>
-            <a href="edit-profile.php" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50">
+            <a href="apply.php" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50 transition-all">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                Applications
+            </a>
+            <a href="edit-profile.php" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50 transition-all">
                 <i data-lucide="settings" class="w-5 h-5"></i>
                 Edit Contact
             </a>
-            <a href="change-password.php" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50">
+            <a href="change-password.php" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700/50 transition-all">
                 <i data-lucide="lock" class="w-5 h-5"></i>
                 Security
             </a>
@@ -90,11 +94,16 @@ include '../includes/header.php';
                     <p class="text-2xl font-bold mt-1 truncate"><?php echo htmlspecialchars($student['department_name'] ?? 'Not Assigned'); ?></p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                    <div class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 mb-4">
-                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 mb-4">
+                        <i data-lucide="file-text" class="w-6 h-6"></i>
                     </div>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Account Status</p>
-                    <p class="text-2xl font-bold mt-1 text-green-600">Active</p>
+                    <?php 
+                    $app_stats = $pdo->prepare("SELECT COUNT(*) FROM applications WHERE student_id = ?");
+                    $app_stats->execute([$student_id]);
+                    $app_count = $app_stats->fetchColumn();
+                    ?>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Applications Sent</p>
+                    <p class="text-2xl font-bold mt-1"><?php echo $app_count; ?></p>
                 </div>
             </div>
 
