@@ -175,12 +175,115 @@ include '../includes/header.php';
                     </div>
                 </div>
 
-                <!-- More panels hidden for brevity but the structure is set... -->
-                <div x-show="tab === 'woredas'" class="text-center py-20 bg-white dark:bg-gray-900 rounded-[3rem] border border-dashed border-gray-100 dark:border-gray-800" x-cloak>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Woreda mapping interactive is active.</p>
+                <!-- Woredas Panel -->
+                <div x-show="tab === 'woredas'" class="grid grid-cols-1 lg:grid-cols-3 gap-10" x-cloak>
+                    <div class="lg:col-span-1">
+                        <div class="bg-white dark:bg-gray-900 rounded-[2.5rem] p-8 border border-gray-100 dark:border-gray-800 shadow-sm">
+                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Create Woreda</h4>
+                            <form method="POST" class="space-y-6">
+                                <input type="hidden" name="type" value="woreda">
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Parent Zone</label>
+                                    <select name="zone_id" required class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-emerald-600 font-bold appearance-none">
+                                        <?php foreach($zones as $z): ?>
+                                            <option value="<?php echo $z['id']; ?>"><?php echo htmlspecialchars($z['name'] . ' (' . $z['rname'] . ')'); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Woreda Designation</label>
+                                    <input type="text" name="name" required class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-emerald-600 font-bold" placeholder="Woreda Name">
+                                </div>
+                                <button type="submit" class="w-full py-4 bg-emerald-600 text-white font-black rounded-2xl text-[10px] uppercase tracking-widest shadow-lg hover:scale-105 transition-all">Map Woreda</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <div class="bg-white dark:bg-gray-900 rounded-[2.5rem] p-10 border border-gray-100 dark:border-gray-800 shadow-sm">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="text-[10px] font-black uppercase text-gray-400 border-b border-gray-50 dark:border-gray-800">
+                                        <th class="pb-4">Woreda Node</th>
+                                        <th class="pb-4">Zone Parent</th>
+                                        <th class="pb-4 text-right">Region Origin</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-50 dark:divide-gray-800">
+                                    <?php 
+                                    $w_query = "SELECT w.*, z.name as zname, r.name as rname 
+                                               FROM woredas w 
+                                               JOIN zones z ON w.zone_id = z.id 
+                                               JOIN regions r ON z.region_id = r.id 
+                                               ORDER BY r.name, z.name, w.name ASC";
+                                    foreach($pdo->query($w_query)->fetchAll() as $w): 
+                                    ?>
+                                    <tr>
+                                        <td class="py-4 font-black text-gray-950 dark:text-white"><?php echo htmlspecialchars($w['name']); ?></td>
+                                        <td class="py-4 text-xs font-bold text-gray-500 uppercase"><?php echo htmlspecialchars($w['zname']); ?></td>
+                                        <td class="py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest"><?php echo htmlspecialchars($w['rname']); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div x-show="tab === 'kebeles'" class="text-center py-20 bg-white dark:bg-gray-900 rounded-[3rem] border border-dashed border-gray-100 dark:border-gray-800" x-cloak>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Kebele mapping interactive is active.</p>
+
+                <!-- Kebeles Panel -->
+                <div x-show="tab === 'kebeles'" class="grid grid-cols-1 lg:grid-cols-3 gap-10" x-cloak>
+                    <div class="lg:col-span-1">
+                        <div class="bg-white dark:bg-gray-900 rounded-[2.5rem] p-8 border border-gray-100 dark:border-gray-800 shadow-sm">
+                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Create Kebele</h4>
+                            <form method="POST" class="space-y-6">
+                                <input type="hidden" name="type" value="kebele">
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Parent Woreda</label>
+                                    <select name="woreda_id" required class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-emerald-600 font-bold appearance-none">
+                                        <?php 
+                                        $w_list = $pdo->query("SELECT w.*, z.name as zname FROM woredas w JOIN zones z ON w.zone_id = z.id ORDER BY w.name ASC")->fetchAll();
+                                        foreach($w_list as $wl): 
+                                        ?>
+                                            <option value="<?php echo $wl['id']; ?>"><?php echo htmlspecialchars($wl['name'] . ' (' . $wl['zname'] . ')'); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Kebele Designation</label>
+                                    <input type="text" name="name" required class="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl outline-none focus:ring-2 focus:ring-emerald-600 font-bold" placeholder="Kebele Name/Number">
+                                </div>
+                                <button type="submit" class="w-full py-4 bg-emerald-600 text-white font-black rounded-2xl text-[10px] uppercase tracking-widest shadow-lg hover:scale-105 transition-all">Map Kebele</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <div class="bg-white dark:bg-gray-900 rounded-[2.5rem] p-10 border border-gray-100 dark:border-gray-800 shadow-sm">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="text-[10px] font-black uppercase text-gray-400 border-b border-gray-50 dark:border-gray-800">
+                                        <th class="pb-4">Kebele Node</th>
+                                        <th class="pb-4">Woreda Parent</th>
+                                        <th class="pb-4 text-right">Zone context</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-50 dark:divide-gray-800">
+                                    <?php 
+                                    $k_query = "SELECT k.*, w.name as wname, z.name as zname 
+                                               FROM kebeles k 
+                                               JOIN woredas w ON k.woreda_id = w.id 
+                                               JOIN zones z ON w.zone_id = z.id 
+                                               ORDER BY w.name, k.name ASC";
+                                    foreach($pdo->query($k_query)->fetchAll() as $k): 
+                                    ?>
+                                    <tr>
+                                        <td class="py-4 font-black text-gray-950 dark:text-white"><?php echo htmlspecialchars($k['name']); ?></td>
+                                        <td class="py-4 text-xs font-bold text-gray-500 uppercase"><?php echo htmlspecialchars($k['wname']); ?></td>
+                                        <td class="py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest"><?php echo htmlspecialchars($k['zname']); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
